@@ -38,17 +38,18 @@
 		</repository>
 	</distributionManagement>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>maven1</id>
-			<name>Maven.org</name>
-			<url>https://repo1.maven.org/maven2</url>
-		</pluginRepository>
-	</pluginRepositories>
-	<repositories>
+	<plugins>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version> <!-- Use a more recent version -->
+    </plugin>
+</plugins>
+
+<repositories>
     <repository>
         <id>central</id>
-        <url>https://repo.maven.apache.org/maven2</url>
+        <url>https://repo.maven.apache.org/maven2</url> <!-- Ensure correct repository URL -->
     </repository>
 </repositories>
 
