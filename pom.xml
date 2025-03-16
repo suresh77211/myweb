@@ -6,7 +6,7 @@
 	<packaging>war</packaging>
 	<version>8.2.0</version>
 	<name>Java Home myweb</name>
-	<url>http://maven.apache.org</url>
+	<url>https://maven.apache.org</url>
 
 	<properties>
 		<docker.image.prefix>kammana</docker.image.prefix>
@@ -29,12 +29,12 @@
 	<distributionManagement>
 		<snapshotRepository>
 			<id>nexusRepo</id>
-			<url>http://54.178.74.89:8081/repository/sample-snapshots/</url>
+			<url>https://54.178.74.89:8081/repository/sample-snapshots/</url>
 		</snapshotRepository>
 
 		<repository>
 			<id>nexusRepo</id>
-			<url>http://54.178.74.89:8081/repository/sample-releases/</url>
+			<url>https://54.178.74.89:8081/repository/sample-releases/</url>
 		</repository>
 	</distributionManagement>
 
@@ -42,7 +42,7 @@
 		<pluginRepository>
 			<id>maven1</id>
 			<name>Maven.org</name>
-			<url>http://repo1.maven.org/maven2</url>
+			<url>https://repo1.maven.org/maven2</url>
 		</pluginRepository>
 	</pluginRepositories>
 
