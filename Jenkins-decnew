@@ -11,10 +11,8 @@ pipeline{
             }
         }
         stage("Maven Build"){
-          steps {
-                withSonarQubeEnv('MySonarQube') {
-                    sh "mvn clean package sonar:sonar"
-                }
+            steps{
+                sh "mvn clean package"
                 sh "mv target/*.war target/myweb.war"
             }
         }
