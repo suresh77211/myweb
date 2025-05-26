@@ -16,6 +16,13 @@ pipeline{
                 sh "mv target/*.war target/myweb.war"
             }
         }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('mysonarqube') {
+                    sh "mvn sonar:sonar"
+                }
+            }
+        }
         stage("deploy-dev"){
             steps{
                 sshagent(['tomcat-new']) {
