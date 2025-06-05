@@ -13,12 +13,17 @@ pipeline{
                 git credentialsId: 'javahome2', url: 'https://github.com/suresh77211/myweb.git'
             }
         }
-        stage("Maven Build"){
-            steps{
-                sh "mvn clean sonar:sonar package"
-                
-            }
+       stage('SonarQube Analysis') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'sonarqube-admin', usernameVariable: 'SONAR_LOGIN', passwordVariable: 'SONAR_PASSWORD')]) {
+            sh """
+                mvn sonar:sonar \
+                    -Dsonar.login=$SONAR_LOGIN \
+                    -Dsonar.password=$SONAR_PASSWORD
+            """
         }
+    }
+}
         stage('Upload War To Nexus'){
             steps{
                   nexusArtifactUploader artifacts: [
