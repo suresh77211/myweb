@@ -61,7 +61,7 @@ pipeline {
             steps {
                withKubeConfig([credentialsId: 'kubeconfig-prod']) {
             sh 'kubectl apply -f springBoot.yml'
-                )
+                
             }
         }
     }
