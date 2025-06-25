@@ -1,65 +1,72 @@
-pipeline{
+pipeline {
     agent any
-     tools {
+
+    tools {
         maven 'Maven-3.6.1'
     }
-    
-    environment{
+
+    environment {
         PATH = "/opt/maven3/bin:$PATH"
     }
-    stages{
-        stage("Git Checkout"){
-            steps{
+
+    stages {
+        stage("Git Checkout") {
+            steps {
                 git credentialsId: 'javahome2', url: 'https://github.com/srinivas1987devops/myweb.git'
             }
         }
-        stage("Maven Build"){
-            steps{
-                sh "mvn clean sonar:sonar package"
-                
+
+        stage("Maven Build & SonarQube Scan") {
+            steps {
+                withSonarQubeEnv('mysonar') {
+                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                        sh 'mvn clean package sonar:sonar -Dsonar.host.url=http://44.203.120.153:9000 -Dsonar.login=$SONAR_TOKEN'
+                    }
+                }
             }
         }
-        stage('Upload War To Nexus'){
-            steps{
-                  nexusArtifactUploader artifacts: [
-                       [
-                            artifactId: 'myweb', 
-                            classifier: '', 
-                            file: "target/myweb-8.2.0.war", 
-                            type: 'war'
-                       ]
-                  ], 
-                  credentialsId: 'nexus3', 
-                  groupId: 'in.javahome', 
-                  nexusUrl: '172.31.89.73:8081', 
-                  nexusVersion: 'nexus3', 
-                  protocol: 'http', 
-                  repository: 'sample-releases', 
-                  version: '8.2.0'  
-              }
+
+        stage("Upload War To Nexus") {
+            steps {
+                nexusArtifactUploader artifacts: [[
+                    artifactId: 'myweb',
+                    classifier: '',
+                    file: 'target/myweb-8.2.0.war',
+                    type: 'war'
+                ]],
+                credentialsId: 'nexus3',
+                groupId: 'in.javahome',
+                nexusUrl: '172.31.89.73:8081',
+                nexusVersion: 'nexus3',
+                protocol: 'http',
+                repository: 'sample-releases',
+                version: '8.2.0'
             }
-        stage('Build Docker Image'){
-            steps{
-                 sh 'docker build -t suresh772111/spring-boot-mongo .'
-             }
-         }
-        stage('Push Docker Image'){
-             steps{
-                  withCredentials([string(credentialsId: 'DOCKER_HUB_CREDENTIALS', variable: 'DOCKER_HUB_CREDENTIALS')]) {
-                      sh "docker login -u suresh772111 -p ${DOCKER_HUB_CREDENTIALS}"
+        }
+
+        stage("Build Docker Image") {
+            steps {
+                sh 'docker build -t suresh772111/spring-boot-mongo .'
             }
-            sh 'docker push suresh772111/spring-boot-mongo'
         }
-      }
-        stage("Deploy To Kuberates Cluster"){
-              steps{
-                   kubernetesDeploy(
-                   configs: 'springBoot.yml', 
-                   kubeconfigId: 'KUBERNETES_CLUSTER_CONFIG',
-                   enableConfigSubstitution: true
-            )
+
+        stage("Push Docker Image") {
+            steps {
+                withCredentials([string(credentialsId: 'DOCKER_HUB_CREDENTIALS', variable: 'DOCKER_HUB_CREDENTIALS')]) {
+                    sh "docker login -u suresh772111 -p ${DOCKER_HUB_CREDENTIALS}"
+                }
+                sh 'docker push suresh772111/spring-boot-mongo'
+            }
         }
-    }
-        
+
+        stage("Deploy To Kubernetes Cluster") {
+            steps {
+                kubernetesDeploy(
+                    configs: 'springBoot.yml',
+                    kubeconfigId: 'KUBERNETES_CLUSTER_CONFIG',
+                    enableConfigSubstitution: true
+                )
+            }
+        }
     }
 }
