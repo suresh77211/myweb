@@ -59,10 +59,8 @@ pipeline {
 
         stage("Deploy To Kubernetes Cluster") {
             steps {
-                kubernetesDeploy(
-                    configs: 'springBoot.yml',
-                    kubeconfigId: 'kubeconfig-prod',
-                    enableConfigSubstitution: true
+               withKubeConfig([credentialsId: 'kubeconfig-prod']) {
+            sh 'kubectl apply -f springBoot.yml'
                 )
             }
         }
