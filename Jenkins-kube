@@ -58,7 +58,7 @@ pipeline {
         stage("Deploy To Kubernetes Cluster") {
             steps {
                 withKubeConfig([credentialsId: 'kubeconfig-prod']) {
-                    sh 'kubectl apply -f springBoot.yml'
+                     sh 'kubectl apply --validate=false -f /var/lib/jenkins/workspace/Kubernetes_final/springBoot.yml'
                 }
             }
         }
