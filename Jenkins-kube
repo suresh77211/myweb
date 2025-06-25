@@ -5,8 +5,6 @@ pipeline {
         maven 'Maven-3.6.1'
     }
 
-   
-
     stages {
         stage("Git Checkout") {
             steps {
@@ -59,9 +57,9 @@ pipeline {
 
         stage("Deploy To Kubernetes Cluster") {
             steps {
-               withKubeConfig([credentialsId: 'kubeconfig-prod']) {
-            sh 'kubectl apply -f springBoot.yml'
-                
+                withKubeConfig([credentialsId: 'kubeconfig-prod']) {
+                    sh 'kubectl apply -f springBoot.yml'
+                }
             }
         }
     }
